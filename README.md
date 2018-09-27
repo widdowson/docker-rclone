@@ -1,33 +1,37 @@
-# docker-rclone-sync
+# docker-rclone
 
-Perform an [rclone](http://rclone.org) sync based on a cron schedule, with [healthchecks.io](https://healthchecks.io) monitoring.
+Perform an [rclone](http://rclone.org) command based on a cron schedule, with [healthchecks.io](https://healthchecks.io) monitoring.
 
 ## Usage
 ```
 docker create \
   --name=rclone-sync \
-  --env CRON="0 * * * *" \  
-  --env CHECK_URL=http://example.com/asdf1234 \
-  --env SYNC_SRC=/path/to/src \
-  --env SYNC_DEST="gdrive:path" \
-  --env SYNC_OPTS="-v" \
+  --env COMMAND="sync" \
+  --env COMMAND_OPTS="-v" \
+  --env CRON="0 * * * *" \
+  --env CRON_ENABLED="1" \
+  --env DESTINATION="gdrive:media" \
+  --env HEALTH_URL=http://example.com/asdf1234 \
+  --env SOURCE=/source \
   --env TZ="America/Edmonton" \
   --volume <path to data>:/config \
-  radpenguin/rclone-sync
+  radpenguin/rclone
 ```
 
 ## Parameters
 The parameters are split into two halves, separated by a colon, the left hand side representing the host and the right the container side. 
 ```
 --volume /config - config file and for rclone
+--env COMMAND - The command to run. Defaults to "sync"
+--env COMMAND_OPTS - additional options for rclone sync command. Defaults to `-v`
 --env CRON - cron schedule, defaults to sync hourly
---env CHECK_URL - monitoring service url to GET after a successful sync
---env SYNC_SRC - source location for rclone sync command
---env SYNC_DEST - destination location for rclone sync command
---env SYNC_OPTS - additional options for rclone sync command. Defaults to `-v`
+--env CRON_ENABLED - Defaults to "1". If disabled, rclone will run once when container is started
+--env DESTINATION - The destination on the rclone remote
+--env HEALTH_URL - monitoring service url to GET after a successful sync
+--env SOURCE - The local source directory
 --env TZ - the timezone to use for the cron and log. Defaults to `America/Edmonton`
 ```
 
-It is based on alpine linux. For shell access while the container is running, `docker exec -it rclone-sync /bin/bash`.
+It is based on alpine linux. For shell access while the container is running, `docker exec -it rclone /bin/bash`.
 
-See [rclone sync docs](https://rclone.org/commands/rclone_sync/) for source/dest syntax and additional options.
+See [rclone docs](https://rclone.org/commands/) for syntax and additional options.

@@ -25,15 +25,15 @@ lock() {
 lock || exit 1
 
 # Clean up empty directories in order to speed up rclone
-find "$SYNC_SRC" -mindepth 2 -type d -empty -delete
+find "$SOURCE" -mindepth 2 -type d -empty -delete
 
 # Set IO Priority to Best Effort (2), lowest priority (7)
 /usr/bin/ionice -c2 -n7 -p$$
 
-echo -e "$( date )\t(pid $$)\trclone $RCLONE_OPTS sync $SYNC_OPTS $SYNC_SRC $SYNC_DEST"
-rclone $RCLONE_OPTS sync $SYNC_OPTS $SYNC_SRC $SYNC_DEST
+echo -e "$( date )\t(pid $$)\trclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION"
+rclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION
 
-if [ ! -z "$CHECK_URL" ]; then
-  echo "$( date ) Pinging $CHECK_URL"
-  curl --silent $CHECK_URL
+if [ ! -z "$HEALTH_URL" ]; then
+  echo "$( date ) Pinging $HEALTH_URL"
+  curl --silent $HEALTH_URL
 fi

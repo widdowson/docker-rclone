@@ -5,12 +5,13 @@ ARG BUILD_DATE
 ARG VERSION
 LABEL build_version="RadPenguin version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
+ENV COMMAND=sync
+ENV COMMAND_OPTS=-v
+ENV CONFIG_OPTS="--config /config/rclone.conf"
 ENV CRON="0 * * * *"
-ENV CHECK_URL=
-ENV SYNC_SRC=
-ENV SYNC_DEST=
-ENV SYNC_OPTS=-v
-ENV RCLONE_OPTS="--config /config/rclone.conf"
+ENV DESTINATION=
+ENV HEALTH_URL=
+ENV SOURCE=/source
 ENV TZ="America/Edmonton"
 
 RUN \
@@ -33,7 +34,7 @@ RUN \
   rm -rf /tmp/*
 
 COPY entrypoint.sh /
-COPY sync.sh /
+COPY rclone.sh /
 
 VOLUME ["/config"]
 
