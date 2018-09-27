@@ -18,7 +18,7 @@ docker build \
   --file=./Dockerfile \
   --build-arg=BUILD_DATE="$BUILD_DATE" \
   --build-arg=VERSION="$VERSION" \
-  --tag=radpenguin/$REPO_NAME:latest \
+  --tag=$REPO_NAME \
   .
 
-docker push docker.io/$REPO_NAME
+docker push $REPO_NAME
