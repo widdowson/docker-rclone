@@ -15,20 +15,20 @@ fi
 
 if [[ "$CRON_ENABLED" != "1" ]]; then
   echo "$( date +'%Y/%m/%d %H:%M:%S' ) Running rclone"
-  /rclone.sh >> /dev/stdout 2>&1
+  /rclone.sh >> /rclone.log 2>&1
 else
-  # Setup cron schedule
+  # Setup a crontab for the root user
+  echo "$( date +'%Y/%m/%d %H:%M:%S' ) Setting up cron"
   crontab -d
-  echo "$CRON /rclone.sh >> /dev/stdout 2>&1" > /tmp/crontab.tmp
-  crontab /tmp/crontab.tmp
-  rm /tmp/crontab.tmp
+  echo "$CRON /rclone.sh >> /rclone.log 2>&1" > /crontab
+  crontab /crontab
 
-  # Start cron
+  # Setup cron schedule
   echo "$( date +'%Y/%m/%d %H:%M:%S' ) Starting cron"
-  crond -b -l 0 -L /dev/stdout
+  crond -b -l warn -L /rclone.log
 
   # Wait forever
   while [ 1 ]; do
-    sleep 86400
+    tail -f /rclone.log
   done
 fi
