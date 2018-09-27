@@ -8,9 +8,9 @@ cp /usr/share/zoneinfo/$TZ /etc/localtime
 echo $TZ > /etc/timezone
 
 # Configure rclone
-if [[ $( rclone config show | grep "empty config" | wc -l ) != "0" ]]; then
-  echo "INFO: Starting rclone config"
-  rclone config $RCLONE_OPTS
+if [[ $( rclone $RCLONE_OPTS config show | grep "empty config" | wc -l ) != "0" ]]; then
+  echo "$( date ) Configuring rclone"
+  rclone $RCLONE_OPTS config
 fi
 
 # Tidy up previous sync jobs
@@ -23,6 +23,5 @@ crontab /tmp/crontab.tmp
 rm /tmp/crontab.tmp
 
 # Start cron
-echo "INFO: Starting crond ..."
+echo "$( date ) Starting cron"
 crond -b -l 0 -L /dev/stdout
-echo "INFO: crond started"
