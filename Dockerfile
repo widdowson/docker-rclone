@@ -28,7 +28,6 @@ RUN \
   curl -o /tmp/rclone.zip -L "https://downloads.rclone.org/rclone-current-linux-amd64.zip" && \
   unzip /tmp/rclone.zip -d /tmp && \
   mv /tmp/rclone-*linux*/rclone /usr/bin/ && \
-  find /usr/bin | sort && \
   echo "**** cleanup ****" && \
   apk del --purge build-dependencies && \
   rm -rf /tmp/*
