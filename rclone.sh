@@ -22,18 +22,18 @@ lock() {
 }
 
 # Only run one copy of the script at a time
+echo "$( date +'%Y/%m/%d %H:%M:%S' ) Checking process lock"
 lock || exit 1
 
 # Clean up empty directories in order to speed up rclone
-find "$SOURCE" -mindepth 2 -type d -empty -delete
+echo "$( date +'%Y/%m/%d %H:%M:%S' ) Tidying empty directories in $SOURCE"
+find "$SOURCE" -mindepth 2 -depth -not -path '*/\.*' -type d -exec rmdir -p --ignore-fail-on-non-empty {} \;
 
-# Set IO Priority to Best Effort (2), lowest priority (7)
-/usr/bin/ionice -c2 -n7 -p$$
-
-echo -e "$( date )\t(pid $$)\trclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION"
+echo -e "$( date +'%Y/%m/%d %H:%M:%S' ) rclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION"
 rclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION
 
-if [ ! -z "$HEALTH_URL" ]; then
-  echo "$( date ) Pinging $HEALTH_URL"
+
+if [[ ! -z "$HEALTH_URL" ]]; then
+  echo "$( date +'%Y/%m/%d %H:%M:%S' ) Pinging $HEALTH_URL"
   curl --silent $HEALTH_URL
 fi

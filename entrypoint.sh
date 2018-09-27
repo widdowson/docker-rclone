@@ -9,12 +9,13 @@ echo $TZ > /etc/timezone
 
 # Configure rclone
 if [[ $( rclone $CONFIG_OPTS config show | grep "empty config" | wc -l ) != "0" ]]; then
-  echo "$( date ) Configuring rclone"
+  echo "$( date +'%Y/%m/%d %H:%M:%S' ) Configuring rclone"
   rclone $CONFIG_OPTS config
 fi
 
-if [[ "$CRON_ENABLED" != "1" ]; then
-  /rclone.sh
+if [[ "$CRON_ENABLED" != "1" ]]; then
+  echo "$( date +'%Y/%m/%d %H:%M:%S' ) Running rclone"
+  /rclone.sh >> /dev/stdout 2>&1
 else
   # Setup cron schedule
   crontab -d
@@ -23,6 +24,6 @@ else
   rm /tmp/crontab.tmp
 
   # Start cron
-  echo "$( date ) Starting cron"
+  echo "$( date +'%Y/%m/%d %H:%M:%S' ) Starting cron"
   crond -b -l 0 -L /dev/stdout
 fi

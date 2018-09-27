@@ -5,7 +5,7 @@ Perform an [rclone](http://rclone.org) command based on a cron schedule, with [h
 ## Usage
 ```
 docker create \
-  --name=rclone-sync \
+  --name=rclone \
   --env COMMAND="sync" \
   --env COMMAND_OPTS="-v" \
   --env CRON="0 * * * *" \
@@ -23,11 +23,11 @@ The parameters are split into two halves, separated by a colon, the left hand si
 ```
 --volume /config - config file and for rclone
 --env COMMAND - The command to run. Defaults to "sync"
---env COMMAND_OPTS - additional options for rclone sync command. Defaults to `-v`
---env CRON - cron schedule, defaults to sync hourly
+--env COMMAND_OPTS - additional options for rclone command. Defaults to `-v`
+--env CRON - cron schedule, defaults to hourly
 --env CRON_ENABLED - Defaults to "1". If disabled, rclone will run once when container is started
 --env DESTINATION - The destination on the rclone remote
---env HEALTH_URL - monitoring service url to GET after a successful sync
+--env HEALTH_URL - monitoring service url to GET after a successful rclone command
 --env SOURCE - The local source directory
 --env TZ - the timezone to use for the cron and log. Defaults to `America/Edmonton`
 ```
