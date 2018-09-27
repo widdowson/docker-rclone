@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_DATE=$( date +%Y-%m-%d )
+BUILD_DATE=$( date +"%Y-%m-%d %H-%M-%S" )
 REPO_NAME=radpenguin/rclone-sync
 VERSION=$( curl --silent https://rclone.org/downloads/ | grep "Rclone Download" | sed -e 's/^.*Rclone Download v//' )
 
