@@ -13,6 +13,9 @@ if [[ $( rclone $CONFIG_OPTS config show | grep "empty config" | wc -l ) != "0" 
   rclone $CONFIG_OPTS config
 fi
 
+# Trim the log
+echo "" > /rclone.log
+
 if [[ "$CRON_ENABLED" != "1" ]]; then
   echo "$( date +'%Y/%m/%d %H:%M:%S' ) Running rclone"
   /rclone.sh >> /rclone.log 2>&1
