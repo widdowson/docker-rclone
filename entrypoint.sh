@@ -26,4 +26,9 @@ else
   # Start cron
   echo "$( date +'%Y/%m/%d %H:%M:%S' ) Starting cron"
   crond -b -l 0 -L /dev/stdout
+
+  # Wait forever
+  while [ 1 ]; do
+    sleep 86400
+  done
 fi
