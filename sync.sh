@@ -1,32 +1,39 @@
 #!/bin/sh
 
-set -e
+# fail fast
+set -e -u
 
-echo "INFO: Starting sync.sh pid $$ $(date)"
+# Locking code retrieved from http://stackoverflow.com/a/1985512 on 2017-03-17
+LOCK_FILE=/tmp/$( md5sum "$0" | awk '{print $1}' ).lock
+LOCK_FD=99
+_lock() {
+    flock -$1 $LOCK_FD;
+}
+_no_more_locking() {
+    _lock u;
+    _lock xn && rm -f $LOCK_FILE;
+}
+lock() {
+    eval "exec $LOCK_FD>\"$LOCK_FILE\"";
+    trap _no_more_locking EXIT;
 
-if [ `lsof | grep $0 | wc -l | tr -d ' '` -gt 1 ]
-then
-  echo "WARNING: A previous sync is still running. Skipping new sync command."
-else
+    # Obtain an exclusive lock immediately or fail
+    _lock xn;
+}
 
-echo $$ > /tmp/sync.pid
+# Only run one copy of the script at a time
+lock || exit 1
 
-if test "$(rclone ls $SYNC_SRC $RCLONE_OPTS)"; then
-  # the source directory is not empty
-  # it can be synced without clear data loss
-  echo "INFO: Starting rclone sync $SYNC_SRC $SYNC_DEST $RCLONE_OPTS $SYNC_OPTS"
-  rclone sync $SYNC_SRC $SYNC_DEST $RCLONE_OPTS $SYNC_OPTS
+# Clean up empty directories in order to speed up rclone
+find "$SYNC_SRC" -mindepth 2 -type d -empty -delete
 
-  if [ -z "$CHECK_URL" ]
-  then
-    echo "INFO: Define CHECK_URL with https://healthchecks.io to monitor sync job"
-  else
-    wget $CHECK_URL -O /dev/null
-  fi
-else
-  echo "WARNING: Source directory is empty. Skipping sync command."
-fi
+# Set IO Priority to Best Effort (2), lowest priority (7)
+/usr/bin/ionice -c2 -n7 -p$$
 
-rm -f /tmp/sync.pid
+echo -e "$( date )\t(pid $$)\trclone $RCLONE_OPTS sync $SYNC_OPTS $SYNC_SRC $SYNC_DEST"
+rclone $RCLONE_OPTS sync $SYNC_OPTS $SYNC_SRC $SYNC_DEST
 
+if [ ! -z "$CHECK_URL" ]; then
+  echo "$( date ) Pinging $CHECK_URL"
+  curl --silent $CHECK_URL
 fi
