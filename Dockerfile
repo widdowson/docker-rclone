@@ -15,13 +15,10 @@ ENV SOURCE=/source
 ENV TZ="America/Edmonton"
 
 RUN \
-  echo "**** install build packages ****" && \
-  apk add --no-cache --virtual=build-dependencies \
-    curl \
-    wget && \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
     ca-certificates \
+    curl \
     dcron \
     fuse \
     tzdata && \
