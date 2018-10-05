@@ -1,7 +1,7 @@
 FROM radpenguin/rclone:latest
 
 ARG BUILD_DATE
-ARG VERSION
+ENV VERSION 1.0.0
 LABEL build_version="RadPenguin version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
 ENV COMMAND=sync
