@@ -16,6 +16,7 @@ ENV TZ="America/Edmonton"
 RUN \
   echo "**** install runtime packages ****" && \
   apk add --no-cache \
+    curl \
     dcron && \
   echo "**** cleanup ****" && \
   rm -rf /tmp/*
