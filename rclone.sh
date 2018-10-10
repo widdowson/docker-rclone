@@ -29,9 +29,6 @@ lock || exit 1
 echo "$( date +'%Y/%m/%d %H:%M:%S' ) Tidying empty directories in $SOURCE"
 find "$SOURCE" -mindepth 2 -depth -not -path '*/\.*' -type d -exec rmdir -p --ignore-fail-on-non-empty {} \;
 
-# Set IO Priority to Best Effort (2), lowest priority (7)
-/usr/bin/ionice -c2 -n7 -p$$
-
 echo -e "$( date +'%Y/%m/%d %H:%M:%S' ) rclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION"
 rclone $CONFIG_OPTS $COMMAND $COMMAND_OPTS $SOURCE $DESTINATION
 
