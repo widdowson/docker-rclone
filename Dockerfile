@@ -1,33 +1,29 @@
-FROM alpine:3.5
+FROM radpenguin/rclone:latest
 
-MAINTAINER Brian J. Cardiff <bcardiff@gmail.com>
+ARG BUILD_DATE
+ENV VERSION 1.0.0
+LABEL build_version="RadPenguin version:- ${VERSION} Build-date:- ${BUILD_DATE}"
 
-ENV RCLONE_VERSION=current
-ENV ARCH=amd64
-ENV SYNC_SRC=
-ENV SYNC_DEST=
-ENV SYNC_OPTS=-v
-ENV RCLONE_OPTS="--config /config/rclone.conf"
-ENV CRON=
-ENV CRON_ABORT=
-ENV FORCE_SYNC=
-ENV CHECK_URL=
-ENV TZ=
+ENV COMMAND=sync
+ENV COMMAND_OPTS=-v
+ENV CONFIG_OPTS="--config /config/rclone.conf"
+ENV CRON="0 * * * *"
+ENV DESTINATION=
+ENV HEALTH_URL=
+ENV SOURCE=/source
+ENV TZ="America/Edmonton"
 
-RUN apk -U add ca-certificates fuse wget dcron tzdata \
-    && rm -rf /var/cache/apk/* \
-    && cd /tmp \
-    && wget -q http://downloads.rclone.org/rclone-${RCLONE_VERSION}-linux-${ARCH}.zip \
-    && unzip /tmp/rclone-${RCLONE_VERSION}-linux-${ARCH}.zip \
-    && mv /tmp/rclone-*-linux-${ARCH}/rclone /usr/bin \
-    && rm -r /tmp/rclone*
+RUN \
+  echo "**** install runtime packages ****" && \
+  apk add --no-cache \
+    curl \
+    dcron && \
+  echo "**** cleanup ****" && \
+  rm -rf /tmp/*
 
 COPY entrypoint.sh /
-COPY sync.sh /
-COPY sync-abort.sh /
+COPY rclone.sh /
 
 VOLUME ["/config"]
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-CMD [""]
